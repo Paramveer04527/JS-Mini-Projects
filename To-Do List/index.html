@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>TaskFlow — To-Do List</title>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <main class="app">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-icon">✓</div>
+
+          <div>
+            <h1>TaskFlow</h1>
+            <p>Organize your day. Get things done.</p>
+          </div>
+        </div>
+
+        <div class="date-box">
+          <span class="date-label">TODAY</span>
+          <span id="taskCount">0</span>
+          <span class="date-text">tasks</span>
+        </div>
+      </header>
+
+      <!-- Progress Card -->
+      <section class="progress-card">
+        <div class="progress-info">
+          <div>
+            <span class="progress-title">Daily Progress</span>
+            <span class="progress-subtitle">
+              Keep going, you're doing great!
+            </span>
+          </div>
+
+          <strong id="progressPercent">0%</strong>
+        </div>
+
+        <div class="progress-bar">
+          <div id="progressFill"></div>
+        </div>
+      </section>
+
+      <!-- Add Task -->
+      <section class="add-task">
+        <div class="input-wrapper">
+          <span class="plus-icon">+</span>
+
+          <input
+            type="text"
+            id="taskInput"
+            placeholder="What do you need to accomplish?"
+            autocomplete="off"
+          />
+        </div>
+
+        <button id="addTaskBtn">Add Task</button>
+      </section>
+
+      <!-- Filters -->
+      <nav class="filters">
+        <button class="filter active" data-filter="all">All</button>
+        <button class="filter" data-filter="active">Active</button>
+        <button class="filter" data-filter="completed">Completed</button>
+      </nav>
+
+      <!-- Tasks -->
+      <section class="task-section">
+        <ul id="taskList">
+          <!-- JavaScript will create tasks here -->
+        </ul>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+          <div class="empty-illustration">
+            <div class="empty-check">✓</div>
+          </div>
+
+          <h2>You're all caught up!</h2>
+
+          <p>Add a task above and start getting things done.</p>
+        </div>
+      </section>
+
+      <!-- Bottom Footer -->
+      <footer class="app-footer">
+        <div class="remaining">
+          <span class="status-dot"></span>
+
+          <span>
+            <strong id="remainingCount">0</strong>
+            Tasks Remaining
+          </span>
+        </div>
+
+        <button id="clearCompleted">Clear Completed !!</button>
+      </footer>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>

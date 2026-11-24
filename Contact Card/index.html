@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Profile Card Stack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="profile-system">
+
+        <!-- LEFT CONTROLS -->
+        <div class="left-controls">
+
+            <!-- ADD PROFILE -->
+            <div class="add-panel">
+                <details>
+                    <summary id="add-note" class="control-btn">+</summary>
+                </details>
+            </div>
+
+            <!-- ONE VERTICAL ARROW BLOCK -->
+            <div class="arrow-group">
+                <button id="upKey" class="control-btn" aria-label="Previous card">↑</button>
+                <button id="downKey" class="control-btn" aria-label="Next card">↓</button>
+            </div>
+
+        </div>
+
+
+        <!-- CENTER: EXACTLY 3 VISIBLE CARDS -->
+        <section class="card-stack">
+        </section>
+
+
+        <!-- RIGHT COLOR FILTERS -->
+        <div class="color-controls">
+            <button class="color-btn color-black" aria-label="Black category"></button>
+            <button class="color-btn color-purple" aria-label="Purple category"></button>
+            <button class="color-btn color-orange" aria-label="Orange category"></button>
+            <button class="color-btn color-teal" aria-label="Teal category"></button>
+        </div>
+
+    </main>
+
+    <div class="form-card">
+        <div class="form-title">Add New Profile</div>
+
+        <form class="form-grid">
+
+            <div class="form-group">
+                <label>Profile Image URL</label>
+                <input type="text" placeholder="https://..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" placeholder="Enter full name" required>
+            </div>
+
+            <div class="form-group">
+                <label>Hometown</label>
+                <input type="text" placeholder="City / Country" required>
+            </div>
+
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="text" placeholder="+91..." required>
+            </div>
+
+            <div class="form-group">
+                <label>Purpose</label>
+                <input type="text" placeholder="eg. Quick Assignment" required>
+            </div>
+
+            <div class="btns">
+                <button type="submit" class="submit-btn">
+                    Add Profile
+                </button>
+                <button type="button" class="close-btn">
+                    Close
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        // form part
+        let addNotes = document.querySelector("#add-note");
+        let profileContainer = document.querySelector(".form-card");
+        let closeBtn = document.querySelector(".close-btn");
+
+        // form validation
+        let form = document.querySelector("form");
+        let stack = document.querySelector(".card-stack")
+        const profileImageUrl = document.querySelector('input[placeholder="https://..."]');
+        const name = document.querySelector('input[placeholder="Enter full name"]');
+        const homeTown = document.querySelector('input[placeholder="City / Country"]');
+        const mobileNumber = document.querySelector('input[placeholder="+91..."]');
+        const workPurpose = document.querySelector('input[placeholder="eg. Quick Assignment"]');
+        const submitButton = document.querySelector('.submit-btn');
+        let uId = 0
+
+        // left controls
+        let upButton = document.querySelector("#upKey");
+        let downButton = document.querySelector("#downKey");
+
+        let oldUsers = [];
+        function saveToLocalStorage(obj) {
+            // if object in localStorage is null
+            if (localStorage.getItem("user") === null) {
+                oldUsers.push(obj);
+                localStorage.setItem("user", JSON.stringify(oldUsers))
+            }
+            else {
+                let oldUsers = localStorage.getItem("user");
+                oldUsers = JSON.parse(oldUsers);
+                oldUsers.push(obj);
+                localStorage.setItem("user", JSON.stringify(oldUsers));
+            }
+        }
+        // form opening
+        addNotes.addEventListener("click", function () {
+            profileContainer.style.display = "initial";
+        })
+
+        // form submission
+        form.addEventListener("submit", function (event) {
+            const imageUrl = profileImageUrl.value.trim()
+            const fullName = name.value.trim()
+            const town = homeTown.value.trim()
+            const purpose = workPurpose.value.trim()
+            const contact = mobileNumber.value.trim()
+
+            if (imageUrl === "") {
+                alert("Profile Image URL is required.");
+                return;
+            }
+            else if (fullName === "") {
+                alert("Name is required.");
+                return;
+            }
+            else if (town === "") {
+                alert("Hometown is required.");
+                return;
+            }
+            else if (contact === "") {
+                alert("Mobile Number is required.");
+                return;
+            }
+            else if (purpose === "") {
+                alert("Provide the purpose.");
+                return;
+            }
+            else {
+                // All fields are valid. Continue adding the profile here.
+            }
+
+            saveToLocalStorage({
+                imageUrl,
+                fullName,
+                town,
+                contact,
+                purpose
+            });
+
+            profileContainer.style.display = "none"
+            form.reset();
+        })
+
+        // form closing
+        closeBtn.addEventListener("click", function () {
+            profileContainer.style.display = "none";
+        })
+
+        function createProfileCard(profile) {
+            let allUsers = JSON.parse(localStorage.getItem("user"))
+            allUsers.forEach(function (user) {
+                /* 1. Create the main profile card */
+                const profileCard = document.createElement("div");
+                profileCard.classList.add("profile-card", "card");
+
+                /* 2. Create the card header */
+                const cardHeader = document.createElement("div");
+                cardHeader.classList.add("card-header");
+
+                /* 3. Create the profile image */
+                const profileImage = document.createElement("img");
+                profileImage.classList.add("profile-image");
+                profileImage.src = `${user.imageUrl}`;
+                profileImage.alt = `${user.fullName}`;
+
+                /* 4. Create the profile details container */
+                const profileDetails = document.createElement("div");
+
+                /* Create the profile name */
+                const profileName = document.createElement("div");
+                profileName.classList.add("profile-name");
+                profileName.textContent = `${user.fullName}`;
+
+                /* Create the hometown below the name */
+                const hometown = document.createElement("div");
+                hometown.classList.add("hometown");
+                hometown.textContent = `${user.town}`;
+
+                /* 5. Append name and hometown to profile details */
+                profileDetails.append(profileName, hometown);
+
+                /* 6. Append image and profile details to header */
+                cardHeader.append(profileImage, profileDetails);
+
+                /* 7. Create the information rows */
+                function createInfoRow(labelText, valueText) {
+                    const infoRow = document.createElement("div");
+                    infoRow.classList.add("info-row");
+
+                    const infoLabel = document.createElement("span");
+                    infoLabel.classList.add("info-label");
+                    infoLabel.textContent = labelText;
+
+                    const infoValue = document.createElement("span");
+                    infoValue.classList.add("info-value");
+                    infoValue.textContent = valueText;
+
+                    infoRow.append(infoLabel, infoValue);
+
+                    return infoRow;
+                }
+
+                /* Create individual rows */
+                const homeTownRow = createInfoRow("Home town", `${user.town}`);
+                const purposeRow = createInfoRow("Purpose", `${user.purpose}`);
+                const mobileRow = createInfoRow("Mobile", `${user.contact}`);
+
+                /* 8. Create the card footer */
+                const cardFooter = document.createElement("div");
+                cardFooter.classList.add("card-footer");
+
+                /* Create Call button */
+                const callBtn = document.createElement("button");
+                callBtn.classList.add("action-btn", "call-btn");
+                callBtn.textContent = "☎ Call";
+
+                /* Create Message button */
+                const messageBtn = document.createElement("button");
+                messageBtn.classList.add("action-btn", "message-btn");
+                messageBtn.textContent = "Message";
+
+                /* Append buttons to footer */
+                cardFooter.append(callBtn, messageBtn);
+
+                /* 9. Assemble the complete card */
+                profileCard.append(
+                    cardHeader,
+                    homeTownRow,
+                    purposeRow,
+                    mobileRow,
+                    cardFooter
+                );
+
+                /* 10. Add the card to the page */
+                document.querySelector(".card-stack").append(profileCard);
+
+            });
+        }
+        createProfileCard(oldUsers)
+
+        function updateStack(){
+            let cards = document.querySelectorAll(".card");
+            for(let i = 0; i<3; i++){
+                item.style.zindex = 3 - index;
+                item.style.transform = `translateY(${index * 10}px) scale(${1 - index * 0.02})`;
+                item.style.opacity = `${1 - index * 0.02}`;
+            }
+        }
+
+        upButton.addEventListener("click",function(){
+            let lastChild = stack.lastElementChild;
+            if(lastChild){
+                stack.insertBefore(lastChild, stack.firstElementChild);
+                // update
+                updateStack();
+            }
+        })
+
+        downButton.addEventListener("click",function(){
+            const firstChild = stack.firstElementChild;
+            if(firstChild){
+                stack.appendChild(firstChild);
+                // update
+                updateStack();
+            }
+        })
+    </script>
+</body>
+
+</html>

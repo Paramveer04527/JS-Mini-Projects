@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Hover Animation</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            color: white;
+        }
+        html, body{
+            height: 100%;
+            width: 100%;
+            background-color: #111;
+            position: relative;
+        }
+        .elem{
+            height: 120px;
+            width: 100%;
+            border-bottom: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+        }
+        .elem h1{
+            font-size: 6vw;
+            position: relative;
+            z-index: 9;
+            mix-blend-mode: difference;
+        }
+        .elem img{
+            height: 150px;
+            width: 150px;
+            object-fit: cover;
+            object-position: center;
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.2s linear;
+        }
+    </style>
+</head>
+<body>
+    <div id="main">
+        <div id="elem1" class="elem">
+            <h1>Oppenheimer</h1>
+            <img src="https://plus.unsplash.com/premium_photo-1675791188810-3a01768c1e2f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D" alt="">
+        </div>
+        <div id="elem2" class="elem">
+            <h1>Joe Root</h1>
+            <img src="https://images.unsplash.com/photo-1591738802175-709fedef8288?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8aW1hZ2VzfGVufDB8fDB8fHww" alt="">
+        </div>
+        <div id="elem3" class="elem">
+            <h1>James Anderson</h1>
+            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D" alt="">
+        </div>
+        <div id="elem4" class="elem">
+            <h1>Roman Reigns</h1>
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cGVyc29uYWx8ZW58MHx8MHx8fDA%3D" alt="">
+        </div>
+    </div>
+    
+    <script>
+        // this is long way 
+
+        // let elem1 = document.getElementById("elem1");
+        // let img1 = elem1.querySelector("img");
+
+        // let elem2 = document.getElementById("elem2");   
+        // let img2 = elem2.querySelector("img");
+
+        // let elem3 = document.getElementById("elem3");
+        // let img3 = elem3.querySelector("img");
+
+        // let elem4 = document.getElementById("elem4");
+        // let img4 = elem4.querySelector("img");
+
+        // elem1.addEventListener("mousemove", (e)=>{
+        //     img1.style.left = e.clientX +"px";
+        //     img1.style.top = e.clientY +"px";
+        // });
+        // elem1.addEventListener("mouseenter", (e)=>{
+        //     img1.style.opacity = 1;
+        // });
+        // elem1.addEventListener("mouseleave", (e)=>{
+        //     img1.style.opacity = 0;
+        // });
+
+        // elem2.addEventListener("mousemove", (e)=>{
+        //     img2.style.left = e.clientX +"px";
+        //     img2.style.top = e.clientY +"px";
+        // });
+        // elem2.addEventListener("mouseenter", (e)=>{
+        //     img2.style.opacity = 1;
+        // });
+        // elem2.addEventListener("mouseleave", (e)=>{
+        //     img2.style.opacity = 0;
+        // });
+
+        // elem3.addEventListener("mousemove", (e)=>{
+        //     img3.style.left = e.clientX +"px";
+        //     img3.style.top = e.clientY +"px";
+        // });
+        // elem3.addEventListener("mouseenter", (e)=>{
+        //     img3.style.opacity = 1;
+        // });
+        // elem3.addEventListener("mouseleave", (e)=>{
+        //     img3.style.opacity = 0;
+        // });
+
+        // elem4.addEventListener("mousemove", (e)=>{
+        //     img4.style.left = e.clientX +"px";
+        //     img4.style.top = e.clientY +"px";
+        // });
+        // elem4.addEventListener("mouseenter", (e)=>{
+        //     img4.style.opacity = 1;
+        // });
+        // elem4.addEventListener("mouseleave", (e)=>{
+        //     img4.style.opacity = 0;
+        // });
+
+        // short way
+        let elems = document.querySelectorAll(".elem");
+        elems.forEach((elem)=>{
+            let img = elem.querySelector("img");
+            elem.addEventListener("mouseenter", (e)=>{
+                img.style.opacity = 1;
+            });
+            elem.addEventListener("mouseleave", (e)=>{
+                img.style.opacity = 0;
+            });
+            elem.addEventListener("mousemove", (e)=>{
+                img.style.left = e.clientX +"px";
+            });
+        });
+    </script>
+</body>
+</html>

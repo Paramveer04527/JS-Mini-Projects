@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Snake Game</title>
+  <style>
+    
+    /* Keep the game board as the positioning reference */
+    #gameBoard {
+      position: relative;
+      isolation: isolate;
+    }
+
+    /* Keep the snake and food inside the board layer */
+    #snake,
+    #food {
+      position: absolute;
+      z-index: 2;
+    }
+
+    /* Place the start overlay above the snake and food */
+    #startOverlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Ensure the overlay disappears when JavaScript hides it */
+    #startOverlay.hidden {
+      display: none !important;
+    }
+  </style>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="min-h-screen bg-[#05070a] text-white font-sans">
+  <!-- =========================================================
+         BACKGROUND EFFECTS
+    ========================================================== -->
+
+  <div class="fixed inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[150px]"></div>
+
+    <div class="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-cyan-500/10 blur-[150px]"></div>
+  </div>
+
+  <!-- =========================================================
+         MAIN CONTAINER
+    ========================================================== -->
+
+  <main class="relative min-h-screen px-5 py-8">
+    <div class="max-w-[1100px] mx-auto">
+      <!-- =================================================
+                 HEADER
+            ================================================== -->
+
+      <header class="flex items-center justify-between mb-7">
+        <div class="flex items-center gap-4">
+          <!-- Snake Logo -->
+
+          <div
+            class="w-12 h-12 rounded-2xl flex items-center justify-center bg-emerald-400/10 border border-emerald-400/20 shadow-[0_0_30px_rgba(52,211,153,0.12)]">
+            <div class="flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-sm bg-emerald-300"> </span>
+
+              <span class="w-2.5 h-2.5 rounded-sm bg-emerald-400"> </span>
+
+              <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500/50"> </span>
+            </div>
+          </div>
+
+          <!-- Title -->
+
+          <div>
+            <h1 class="text-xl font-bold tracking-tight">SNAKE</h1>
+
+            <p class="text-[10px] text-gray-500 uppercase tracking-[0.3em]">
+              Arcade Edition
+            </p>
+          </div>
+        </div>
+
+        <!-- Status -->
+
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/[0.07]">
+          <span id="gameStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]">
+          </span>
+
+          <span id="gameStatus" class="text-[11px] text-gray-400 uppercase tracking-wider">
+            Ready
+          </span>
+        </div>
+      </header>
+
+      <!-- =================================================
+                 SECTION 1 — GAME INFORMATION
+            ================================================== -->
+
+      <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+        <!-- CURRENT SCORE -->
+
+        <div class="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0b0f14]/90 px-6 py-5">
+          <div class="absolute top-0 left-0 w-20 h-20 bg-emerald-400/5 blur-2xl"></div>
+
+          <p class="relative text-[10px] uppercase tracking-[0.2em] text-gray-500">
+            Current Score
+          </p>
+
+          <div class="relative flex items-baseline gap-2 mt-2">
+            <span id="score" class="text-4xl font-bold tracking-tight">
+              0000
+            </span>
+
+            <span class="text-[10px] text-emerald-400 font-medium">
+              PTS
+            </span>
+          </div>
+        </div>
+
+        <!-- HIGH SCORE -->
+
+        <div class="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0b0f14]/90 px-6 py-5">
+          <div class="absolute top-0 right-0 w-20 h-20 bg-yellow-400/5 blur-2xl"></div>
+
+          <p class="relative text-[10px] uppercase tracking-[0.2em] text-gray-500">
+            High Score
+          </p>
+
+          <div class="relative flex items-baseline gap-2 mt-2">
+            <span id="highScore" class="text-4xl font-bold tracking-tight">
+              0000
+            </span>
+
+            <span class="text-[10px] text-yellow-400 font-medium">
+              BEST
+            </span>
+          </div>
+        </div>
+
+        <!-- TIME -->
+
+        <div class="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0b0f14]/90 px-6 py-5">
+          <div class="absolute bottom-0 right-0 w-20 h-20 bg-cyan-400/5 blur-2xl"></div>
+
+          <p class="relative text-[10px] uppercase tracking-[0.2em] text-gray-500">
+            Time
+          </p>
+
+          <div class="relative flex items-baseline gap-2 mt-2">
+            <span id="gameTime" class="text-4xl font-bold tracking-tight">
+              00:00
+            </span>
+
+            <span class="text-[10px] text-cyan-400 font-medium"> MIN </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================
+                 MAIN GAME AREA
+            ================================================== -->
+
+      <section class="grid grid-cols-1 lg:grid-cols-[1fr_200px] gap-5">
+        <!-- =================================================
+                     GAME BOARD
+                ================================================== -->
+
+        <div
+          class="rounded-[26px] border border-white/[0.08] bg-[#0b0f14]/90 p-4 sm:p-6 shadow-[0_25px_80px_rgba(0,0,0,0.45)]">
+          <!-- Board Header -->
+
+          <div class="flex items-center justify-between mb-4 px-1">
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.25em] text-gray-500">
+                Game Arena
+              </p>
+
+              <p class="text-sm font-medium text-gray-300 mt-1">
+                Snake Board
+              </p>
+            </div>
+
+            <div class="px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.07]">
+              <span class="text-[10px] text-gray-500 uppercase tracking-wider">
+                20 × 20
+              </span>
+            </div>
+          </div>
+
+          <!-- =================================================
+                         BOARD
+                    ================================================== -->
+
+          <div id="gameBoard"
+            class="relative w-full max-w-[650px] max-h-[500px] aspect-square mx-auto overflow-hidden rounded-2xl border border-white/[0.08] bg-[#070b0e] shadow-[inset_0_0_70px_rgba(0,0,0,0.65)]"
+            style="
+                background-image:
+                  linear-gradient(
+                    rgba(255, 255, 255, 0.035) 1px,
+                    transparent 1px
+                  ),
+                  linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0.035) 1px,
+                    transparent 1px
+                  );
+
+                background-size:
+                  5% 5%,
+                  5% 5%;
+              ">
+            <!-- =========================================
+                             INITIAL SNAKE
+                             LENGTH = 1
+                        ========================================== -->
+
+            <div id="snake"
+              class="absolute w-[4%] h-[4%] left-[47.6%] top-[47.6%] rounded-sm bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.9)] -translate-x-1/2 -translate-y-1/2">
+            </div>
+
+            <!-- =========================================
+                             FOOD
+                        ========================================== -->
+
+            <div id="food" class="absolute w-[6%] h-[6%] left-[69.6%] top-[24.6%] flex items-center justify-center">
+              <div class="w-[65%] h-[65%] rounded-sm bg-rose-400 shadow-[0_0_22px_rgba(251,113,133,0.9)]"></div>
+            </div>
+
+            <!-- =========================================
+                             START OVERLAY
+                        ========================================== -->
+
+            <div id="startOverlay" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="px-7 py-5 rounded-2xl bg-black/40 backdrop-blur-md border border-white/[0.08] text-center">
+
+                <p class="headingText text-[10px] uppercase tracking-[0.35em] text-gray-500">
+                  Ready
+                </p>
+
+                <p class="btnText text-sm text-gray-300 mt-1">Press Start Button to play</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOARD LEGEND -->
+
+          <div class="flex items-center justify-between mt-5 px-1">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_10px_rgba(251,113,133,0.8)]">
+              </span>
+
+              <span class="text-[11px] text-gray-500"> Food </span>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-sm bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]">
+              </span>
+
+              <span class="text-[11px] text-gray-500"> Snake </span>
+            </div>
+
+            <span class="hidden sm:block text-[11px] text-gray-600">
+              Arrow Keys / WASD
+            </span>
+          </div>
+        </div>
+
+        <!-- =================================================
+                     RIGHT CONTROL PANEL
+                ================================================== -->
+
+        <aside class="flex flex-col gap-4">
+          <!-- CONTROLS -->
+
+          <div class="rounded-[22px] border border-white/[0.08] bg-[#0b0f14]/90 p-5">
+            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-4">
+              Controls
+            </p>
+
+            <div class="space-y-2">
+              <!-- START -->
+
+              <button id="startBtn"
+                class="w-full py-3.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-black text-xs font-bold tracking-wider transition shadow-[0_0_25px_rgba(52,211,153,0.15)]">
+                START GAME
+              </button>
+
+              <!-- PAUSE -->
+
+              <button id="pauseBtn"
+                class="w-full py-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] text-gray-300 text-xs font-medium tracking-wider transition hidden">
+                PAUSE
+              </button>
+
+              <!-- RESUME -->
+
+              <button id="resumeBtn"
+                class="w-full py-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] text-gray-300 text-xs font-medium tracking-wider transition hidden">
+                RESUME
+              </button>
+
+              <!-- RESTART -->
+
+              <button id="restartBtn"
+                class="w-full py-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] text-gray-300 text-xs font-medium tracking-wider transition hidden">
+                RESTART
+              </button>
+
+              <!-- END -->
+
+              <button id="endBtn"
+                class="w-full py-3.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] text-gray-300 text-xs font-medium tracking-wider transition hidden">
+                END GAME
+              </button>
+            </div>
+          </div>
+
+          <!-- KEYBOARD -->
+
+          <div class="rounded-[22px] border border-white/[0.08] bg-[#0b0f14]/90 p-5">
+            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-500 mb-4">
+              Movement
+            </p>
+
+            <!-- UP -->
+
+            <div class="flex justify-center mb-2">
+              <kbd
+                class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.08] text-gray-400 text-sm">
+                ↑
+              </kbd>
+            </div>
+
+            <!-- LEFT / DOWN / RIGHT -->
+
+            <div class="flex justify-center gap-2">
+              <kbd
+                class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.08] text-gray-400 text-sm">
+                ←
+              </kbd>
+
+              <kbd
+                class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.08] text-gray-400 text-sm">
+                ↓
+              </kbd>
+
+              <kbd
+                class="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.08] text-gray-400 text-sm">
+                →
+              </kbd>
+            </div>
+
+            <p class="text-center text-[10px] text-gray-600 mt-4">
+              or use W A S D
+            </p>
+          </div>
+        </aside>
+      </section>
+
+      <!-- =================================================
+                 FOOTER
+            ================================================== -->
+
+      <footer class="flex items-center justify-center mt-6">
+        <p class="text-[10px] uppercase tracking-[0.25em] text-gray-700">
+          Eat • Grow • Survive
+        </p>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    
+/* =========================================
+   1. SELECT HTML ELEMENTS
+========================================= */
+
+// Game control buttons
+const startBtn = document.querySelector("#startBtn");
+const pauseBtn = document.querySelector("#pauseBtn");
+const resumeBtn = document.querySelector("#resumeBtn");
+const restartBtn = document.querySelector("#restartBtn");
+const endBtn = document.querySelector("#endBtn");
+
+// Score and time displays
+const scoreDisplay = document.querySelector("#score");
+const highScoreDisplay = document.querySelector("#highScore");
+const timeDisplay = document.querySelector("#gameTime");
+
+// Game board elements
+const board = document.querySelector("#gameBoard");
+const snakeElement = document.querySelector("#snake");
+const foodElement = document.querySelector("#food");
+
+// Status and overlay elements
+const gameStatus = document.querySelector("#gameStatus");
+const statusDot = document.querySelector("#gameStatusDot");
+const overlay = document.querySelector("#startOverlay");
+const headingText = document.querySelector(".headingText");
+const btnText = document.querySelector(".btnText");
+
+showOverlay()
+/* =========================================
+   2. CREATE GAME VARIABLES
+========================================= */
+
+// The board contains 20 rows and 20 columns
+const GRID_SIZE = 20;
+
+// Snake moves once every 140 milliseconds
+const SPEED = 140;
+
+// Name used to save high score in browser storage
+const STORAGE_KEY = "snakeGameHighScore";
+
+// Each snake segment has its own x and y position
+let snake = [
+    { x: 9, y: 10 },
+    { x: 8, y: 10 },
+    { x: 7, y: 10 }
+];
+
+// Snake initially moves towards the right
+let direction = { x: 1, y: 0 };
+let nextDirection = { x: 1, y: 0 };
+
+// Initial fruit position
+let food = { x: 14, y: 5 };
+
+// Score and timer variables
+let score = 0;
+let seconds = 0;
+
+// Store the IDs of our repeating timers
+let gameInterval = null;
+let timeInterval = null;
+
+// Track the current game condition
+let gameState = "ready";
+
+// Load the previous high score, if available
+let highScore = 0;
+
+try {
+    highScore = Number(localStorage.getItem(STORAGE_KEY)) || 0;
+} catch (error) {
+    highScore = 0;
+}
+
+
+/* =========================================
+   3. UPDATE SCORE AND TIMER
+========================================= */
+
+function updateScore() {
+
+    // Show the current score using four digits
+    scoreDisplay.textContent = String(score).padStart(4, "0");
+
+    // Show the highest score
+    highScoreDisplay.textContent =
+        String(highScore).padStart(4, "0");
+}
+
+function updateTime() {
+
+    // Convert total seconds into minutes and seconds
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    // Display time in MM:SS format
+    timeDisplay.textContent =
+        String(minutes).padStart(2, "0") + ":" +
+        String(remainingSeconds).padStart(2, "0");
+}
+
+
+/* =========================================
+   4. UPDATE GAME STATUS
+========================================= */
+
+function updateStatus(message, color = "bg-emerald-400") {
+
+    // Update the status text
+    gameStatus.textContent = message;
+
+    // Update the status indicator color
+    statusDot.className = "w-2 h-2 rounded-full " + color;
+}
+
+function showOverlay(title, message) {
+
+    // Display the overlay and update its text
+    overlay.classList.remove("hidden");
+    headingText.textContent = title;
+    btnText.textContent = message;
+}
+
+function hideOverlay() {
+
+    // Hide the overlay when gameplay starts
+    overlay.classList.add("hidden");
+}
+
+
+/* =========================================
+   5. SHOW AND HIDE CONTROL BUTTONS
+========================================= */
+
+function showButtons(start, pause, resume, restart, end) {
+
+    // Each true value shows its button.
+    // Each false value hides its button.
+    startBtn.classList.toggle("hidden", !start);
+    pauseBtn.classList.toggle("hidden", !pause);
+    resumeBtn.classList.toggle("hidden", !resume);
+    restartBtn.classList.toggle("hidden", !restart);
+    endBtn.classList.toggle("hidden", !end);
+}
+
+
+/* =========================================
+   6. DISPLAY THE SNAKE
+========================================= */
+
+function drawSnake() {
+
+    // Remove the old body segments before drawing again
+    const oldSegments = board.querySelectorAll(".snake-segment");
+
+    oldSegments.forEach(function (segment) {
+        segment.remove();
+    });
+
+    // Draw every segment using its grid position
+    snake.forEach(function (part, index) {
+
+        let segment;
+
+        if (index === 0) {
+
+            // Reuse the original HTML snake element as the head
+            segment = snakeElement;
+
+        } else {
+
+            // Create a new HTML element for each body segment
+            segment = document.createElement("div");
+
+            segment.className =
+                "snake-segment absolute rounded-sm bg-emerald-500";
+
+            board.appendChild(segment);
+        }
+
+        // Convert grid coordinates into percentage positions
+        segment.style.left = (part.x * 5 + 2.5) + "%";
+        segment.style.top = (part.y * 5 + 2.5) + "%";
+
+        // Center the segment inside its grid cell
+        segment.style.transform = "translate(-50%, -50%)";
+
+        segment.style.width = "4%";
+        segment.style.height = "4%";
+
+        // Keep the head above the body
+        segment.style.zIndex = index === 0 ? "2" : "1";
+    });
+}
+
+
+/* =========================================
+   7. DISPLAY THE FRUIT
+========================================= */
+
+function drawFood() {
+
+    // Position the fruit inside its selected grid cell
+    foodElement.style.left = (food.x * 5 + 2.5) + "%";
+    foodElement.style.top = (food.y * 5 + 2.5) + "%";
+
+    // Center the fruit
+    foodElement.style.transform = "translate(-50%, -50%)";
+    foodElement.style.width = "5%";
+    foodElement.style.height = "5%";
+}
+
+
+/* =========================================
+   8. DRAW THE COMPLETE GAME
+========================================= */
+
+function drawGame() {
+
+    // Refresh all visible game information
+    drawSnake();
+    drawFood();
+    updateScore();
+    updateTime();
+}
+
+
+/* =========================================
+   9. GENERATE A NEW FRUIT
+========================================= */
+
+function createFood() {
+
+    // Keep generating positions until the fruit
+    // is not occupying a snake segment
+    do {
+
+        food = {
+            x: Math.floor(Math.random() * GRID_SIZE),
+            y: Math.floor(Math.random() * GRID_SIZE)
+        };
+
+    } while (
+        snake.some(function (part) {
+            return part.x === food.x && part.y === food.y;
+        })
+    );
+
+    // Show the fruit at its new position
+    drawFood();
+}
+
+
+/* =========================================
+   10. START THE GAME
+========================================= */
+
+function startGame() {
+
+    // Do not start another game loop if already playing
+    if (gameState === "running") {
+        return;
+    }
+
+    // Reset the game if the previous game has ended
+    if (gameState === "over" || gameState === "ended") {
+        resetGame();
+    }
+
+    gameState = "running";
+
+    // Hide the starting overlay
+    hideOverlay();
+
+    // Update status and control buttons
+    updateStatus("Playing");
+    showButtons(false, true, false, true, true);
+
+    // Move the snake repeatedly
+    gameInterval = setInterval(moveSnake, SPEED);
+
+    // Increase elapsed time once every second
+    timeInterval = setInterval(function () {
+
+        if (gameState === "running") {
+            seconds++;
+            updateTime();
+        }
+
+    }, 1000);
+}
+
+
+/* =========================================
+   11. MOVE THE SNAKE
+========================================= */
+
+function moveSnake() {
+
+    // Do not move when the game is not running
+    if (gameState !== "running") {
+        return;
+    }
+
+    // Apply the direction selected by the keyboard
+    direction = nextDirection;
+
+    // Get the current head position
+    const head = snake[0];
+
+    // Calculate where the next head position will be
+    const newHead = {
+        x: head.x + direction.x,
+        y: head.y + direction.y
+    };
+
+    // Check whether the snake will eat the fruit
+    const eating =
+        newHead.x === food.x && newHead.y === food.y;
+
+    // Check whether the new head touches a wall
+    const hitWall =
+        newHead.x < 0 ||
+        newHead.x >= GRID_SIZE ||
+        newHead.y < 0 ||
+        newHead.y >= GRID_SIZE;
+
+    // The tail moves away during a normal move.
+    // Therefore, do not check the last segment unless eating.
+    const body = eating ? snake : snake.slice(0, -1);
+
+    // Check whether the new head touches the snake's body
+    const hitBody = body.some(function (part) {
+        return part.x === newHead.x && part.y === newHead.y;
+    });
+
+    // Stop the game if a collision occurs
+    if (hitWall || hitBody) {
+        endGame();
+        return;
+    }
+
+    // Add the new head at the front of the snake array
+    snake.unshift(newHead);
+
+    if (eating) {
+
+        // Increase the score when fruit is eaten
+        score += 10;
+
+        // Save a new high score if the current score is higher
+        if (score > highScore) {
+            highScore = score;
+
+            try {
+                localStorage.setItem(STORAGE_KEY, highScore);
+            } catch (error) {
+                // Continue playing if storage is unavailable
+            }
+        }
+
+        // Generate another fruit.
+        // Do not remove the tail, so the snake grows by one.
+        createFood();
+
+    } else {
+
+        // Remove the last segment during normal movement
+        snake.pop();
+    }
+
+    // Redraw the snake and update the score display
+    drawGame();
+}
+
+
+/* =========================================
+   12. CONTROL SNAKE WITH THE KEYBOARD
+========================================= */
+
+document.addEventListener("keydown", function (event) {
+
+    // Convert the pressed key to lowercase
+    const key = event.key.toLowerCase();
+
+    // Change direction based on the key pressed
+    if (key === "arrowup" || key === "w") {
+
+        nextDirection = { x: 0, y: -1 };
+
+    } else if (key === "arrowdown" || key === "s") {
+
+        nextDirection = { x: 0, y: 1 };
+
+    } else if (key === "arrowleft" || key === "a") {
+
+        nextDirection = { x: -1, y: 0 };
+
+    } else if (key === "arrowright" || key === "d") {
+
+        nextDirection = { x: 1, y: 0 };
+
+    } else {
+
+        // Ignore keys that do not control movement
+        return;
+    }
+
+    // Stop arrow keys from scrolling the webpage
+    event.preventDefault();
+
+    // Do not allow the snake to reverse directly
+    if (
+        nextDirection.x === -direction.x &&
+        nextDirection.y === -direction.y
+    ) {
+        nextDirection = direction;
+    }
+
+    // Start the game when a movement key is pressed
+    if (gameState === "ready") {
+        startGame();
+    }
+});
+
+
+/* =========================================
+   13. PAUSE THE GAME
+========================================= */
+
+function pauseGame() {
+
+    // Pause only if the game is running
+    if (gameState !== "running") {
+        return;
+    }
+
+    gameState = "paused";
+
+    // Stop movement and timer
+    clearInterval(gameInterval);
+    clearInterval(timeInterval);
+
+    gameInterval = null;
+    timeInterval = null;
+
+    // Show the pause overlay
+    updateStatus("Paused", "bg-yellow-400");
+    showOverlay("Paused", "Game Paused, Press Resume to Continue");
+
+    // Show the Resume button instead of Pause
+    showButtons(false, false, true, true, true);
+}
+
+
+/* =========================================
+   14. RESUME THE GAME
+========================================= */
+
+function resumeGame() {
+
+    // Resume only if the game is paused
+    if (gameState !== "paused") {
+        return;
+    }
+
+    // Start the movement and timer again
+    gameState = "running";
+
+    hideOverlay();
+    updateStatus("Playing");
+    showButtons(false, true, false, true, true);
+
+    gameInterval = setInterval(moveSnake, SPEED);
+
+    timeInterval = setInterval(function () {
+
+        seconds++;
+        updateTime();
+
+    }, 1000);
+}
+
+
+/* =========================================
+   15. END THE GAME
+========================================= */
+
+function endGame(won = false) {
+
+    // Stop all repeating timers
+    clearInterval(gameInterval);
+    clearInterval(timeInterval);
+
+    gameInterval = null;
+    timeInterval = null;
+
+    gameState = "over";
+
+    // Save the best score
+    if (score > highScore) {
+        highScore = score;
+
+        try {
+            localStorage.setItem(STORAGE_KEY, highScore);
+        } catch (error) {
+            // Ignore storage errors
+        }
+    }
+
+    updateScore();
+
+    // Show the reason the game ended
+    if (won) {
+        updateStatus("You Won!");
+        showOverlay("You Won!", "Congratulations! You filled the board.");
+    } else {
+        updateStatus("Game Over", "bg-rose-400");
+        showOverlay("Game Over", "Press Restart to play again.");
+    }
+
+    // Allow the player to restart
+    showButtons(false, false, false, true, false);
+}
+
+
+/* =========================================
+   16. RESTART THE GAME
+========================================= */
+
+function resetGame() {
+
+    // Stop any previous game timers
+    clearInterval(gameInterval);
+    clearInterval(timeInterval);
+
+    gameInterval = null;
+    timeInterval = null;
+
+    // Restore the original three-segment snake
+    snake = [
+        { x: 9, y: 10 },
+        { x: 8, y: 10 },
+        { x: 7, y: 10 }
+    ];
+
+    // Restore the starting direction
+    direction = { x: 1, y: 0 };
+    nextDirection = { x: 1, y: 0 };
+
+    // Reset score and elapsed time
+    score = 0;
+    seconds = 0;
+
+    // Return to the ready state
+    gameState = "ready";
+
+    // Place a new fruit and redraw everything
+    createFood();
+    drawGame();
+
+    updateStatus("Ready");
+    showOverlay("Ready", "Press Start Button to play");
+
+    // Show only the Start button
+    showButtons(true, false, false, false, false);
+}
+
+
+/* =========================================
+   17. CONNECT BUTTONS TO FUNCTIONS
+========================================= */
+
+// Start button begins gameplay
+startBtn.addEventListener("click", startGame);
+
+// Pause button stops gameplay
+pauseBtn.addEventListener("click", pauseGame);
+
+// Resume button continues gameplay
+resumeBtn.addEventListener("click", resumeGame);
+
+// Restart button resets the game and starts again
+restartBtn.addEventListener("click", function () {
+    resetGame();
+    startGame();
+});
+
+// End button asks for confirmation before stopping
+endBtn.addEventListener("click", function () {
+
+    if (window.confirm("Do you really want to end the game?")) {
+
+        clearInterval(gameInterval);
+        clearInterval(timeInterval);
+
+        gameInterval = null;
+        timeInterval = null;
+
+        gameState = "ended";
+
+        // Save the best score before leaving the game
+        if (score > highScore) {
+            highScore = score;
+
+            try {
+                localStorage.setItem(STORAGE_KEY, highScore);
+            } catch (error) {
+                // Ignore storage errors
+            }
+        }
+
+        updateScore();
+        updateStatus("Ended", "bg-gray-500");
+
+        showOverlay(
+            "Game Ended",
+            "Final Score: " + score + " • Time: " + timeDisplay.textContent
+        );
+
+        // Return the controls to their initial state
+        showButtons(true, false, false, false, false);
+    }
+});
+
+
+/* =========================================
+   18. INITIALIZE THE GAME
+========================================= */
+
+// Display the saved high score and prepare the board
+updateScore();
+resetGame();
+  </script>
+</body>
+
+</html>

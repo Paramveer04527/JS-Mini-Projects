@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Number Guessing Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="previous-guesses">
+      <p>Previous Guesses: <span id="previousGuesses">—</span></p>
+    </div>
+    <main class="game-container">
+      <div class="game-card">
+        <!-- Header -->
+        <div class="game-header">
+          <div class="icon">🎯</div>
+          <h1>Guess It!</h1>
+          <p>
+            I'm thinking of a number between
+            <strong>1 and 100</strong>
+          </p>
+        </div>
+
+        <!-- Game Area -->
+        <div class="game-area">
+          <label for="guessInput"> Enter your guess </label>
+          <input
+            type="number"
+            id="guessInput"
+            placeholder="Enter a number"
+            min="1"
+            max="100"
+          />
+          <button id="guessBtn" type="button">Guess</button>
+        </div>
+
+        <!-- Result -->
+        <div class="result-area">
+          <p id="message" class="message">Make your first guess!</p>
+          <p class="attempts">
+            Attempts:
+            <span id="attemptCount">0</span>
+          </p>
+        </div>
+
+        <!-- Restart -->
+        <button id="restartBtn" class="restart-btn" type="button">
+          Play Again
+        </button>
+      </div>
+    </main>
+
+    <script>
+      let guessInp = document.querySelector("#guessInput");
+      let guessbtn = document.querySelector("#guessBtn");
+      let p = document.querySelector("#message");
+      let attempts = document.querySelector("#attemptCount");
+      let restart = document.querySelector("#restartBtn");
+
+      let attemptCounter = 0;
+      let secretNum;
+      let gameState = true;
+      let prevGuess = [];
+
+      let previousGuesses = document.querySelector("#previousGuesses");
+
+      function randomInt() {
+        secretNum = Math.random() * 100;
+        secretNum = Math.floor(secretNum);
+        secretNum = secretNum + 1;
+
+        console.log(secretNum);
+      }
+
+      randomInt();
+
+      guessbtn.addEventListener("click", function () {
+        if (gameState === false) {
+          return;
+        }
+
+        if (guessInp.value === "") {
+          p.textContent = "Enter a Value First!";
+          p.style.color = "red";
+          return;
+        } else if (1 > Number(guessInp.value) || Number(guessInp.value) > 100) {
+          p.textContent = "Enter a Value Between 1 to 100!";
+          p.style.color = "red";
+          return;
+        } else if (prevGuess.includes(Number(guessInp.value))) {
+          p.textContent = "This Number is already guessed!";
+          p.style.color = "red";
+          return;
+        } else if (Number(guessInp.value) < secretNum) {
+          p.textContent = "Too Low, Increase the Value!";
+          p.style.color = "red";
+        } else if (Number(guessInp.value) > secretNum) {
+          p.textContent = "Too High, Decrease the Value!";
+          p.style.color = "red";
+        } else if (Number(guessInp.value) === secretNum) {
+          p.textContent = "Correct, You Win!!!";
+          p.style.color = "green";
+
+          gameState = false;
+          restart.style.display = "initial";
+        }
+
+        // Store the valid guess
+        prevGuess.push(Number(guessInp.value));
+        previousGuesses.textContent = `[${prevGuess}]`;
+
+        // Count the attempt only while the game is still active
+        if (gameState === true) {
+          attemptCounter = attemptCounter + 1;
+          attempts.textContent = `${attemptCounter}`;
+
+          // Five incorrect attempts = Game Over
+          if (attemptCounter === 5) {
+            p.textContent = `Game Over! The number was ${secretNum}.`;
+            p.style.color = "red";
+
+            restart.style.display = "initial";
+            gameState = false;
+          }
+        }
+
+        // Winning guess should also count as an attempt
+        else {
+          attemptCounter = attemptCounter + 1;
+          attempts.textContent = `${attemptCounter}`;
+        }
+      });
+
+      restart.addEventListener("click", function () {
+        randomInt();
+
+        gameState = true;
+
+        attemptCounter = 0;
+        attempts.textContent = `${attemptCounter}`;
+
+        guessInp.value = "";
+
+        p.textContent = "Guess a Number!";
+        p.style.color = "purple";
+
+        restart.style.display = "none";
+
+        prevGuess = [];
+        previousGuesses.textContent = `[]`;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Master</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body class="min-h-screen bg-slate-100 text-slate-800">
+    <!-- Main Application Wrapper -->
+    <main class="main flex min-h-screen items-center justify-center px-5 py-10">
+      <!-- Quiz Card -->
+      <section
+        class="w-full max-w-2xl overflow-hidden rounded-3xl bg-white shadow-xl"
+      >
+        <!-- Header -->
+        <header
+          class="bg-gradient-to-r from-indigo-600 to-violet-600 px-8 py-7 text-white"
+        >
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-medium text-indigo-200">
+                Test your knowledge
+              </p>
+
+              <h1 class="mt-1 text-3xl font-bold">Quiz Master</h1>
+            </div>
+
+            <!-- Question Counter -->
+            <div
+              class="ques hidden rounded-xl bg-white/20 px-4 py-2 text-center backdrop-blur-sm"
+            >
+              <p class="text-xs text-indigo-100">Question</p>
+
+              <p class="text-lg font-bold">
+                <span id="currentQuestion">0</span>
+                /
+                <span id="totalQuestions">10</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div
+            class="progressBar hidden mt-6 h-2 overflow-hidden rounded-full bg-white/25"
+          >
+            <div
+              id="progressBar"
+              class="h-full w-[0%] rounded-full bg-white transition-all"
+            ></div>
+          </div>
+        </header>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="px-8 py-16 text-center">
+          <div
+            class="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-indigo-100 text-4xl"
+          >
+            🎯
+          </div>
+
+          <h2 class="mt-6 text-3xl font-bold text-slate-900">
+            Ready to Start?
+          </h2>
+
+          <p class="mx-auto mt-3 max-w-md text-slate-500">
+            Test your JavaScript knowledge with 10 questions. Click below when
+            you're ready to begin.
+          </p>
+
+          <button
+            id="startBtn"
+            class="mt-8 rounded-xl bg-indigo-600 px-8 py-3 font-semibold text-white transition hover:bg-indigo-700"
+          >
+            Start Quiz →
+          </button>
+        </div>
+
+        <!-- Quiz Content -->
+        <div id="quizContent" class="hidden px-8 py-8">
+          <!-- Category and Difficulty -->
+          <div class="flex items-center justify-between gap-3">
+            <span
+              id="category"
+              class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700"
+            >
+              JavaScript
+            </span>
+
+            <span
+              id="difficulty"
+              class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700"
+            >
+              Beginner
+            </span>
+          </div>
+
+          <!-- Question -->
+          <div class="mt-7">
+            <h2
+              id="questionText"
+              class="text-2xl font-bold leading-relaxed text-slate-900"
+            >
+              Which keyword is used to declare a variable in JavaScript?
+            </h2>
+
+            <p class="mt-3 text-sm text-slate-500">
+              Select the correct answer from the options below.
+            </p>
+          </div>
+
+          <!-- Answer Options -->
+          <div id="optionsContainer" class="mt-7 space-y-3">
+            <!-- Option A -->
+            <button
+              class="option-btn group flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 p-4 text-left transition hover:border-indigo-500 hover:bg-indigo-50"
+            >
+              <span
+                class="alphabet flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-bold text-slate-600 group-hover:bg-indigo-600 group-hover:text-white"
+              >
+                A
+              </span>
+
+              <span class="optionVal font-medium">var</span>
+            </button>
+
+            <!-- Option B -->
+            <button
+              class="option-btn group flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 p-4 text-left transition hover:border-indigo-500 hover:bg-indigo-50"
+            >
+              <span
+                class="alphabet flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-bold text-slate-600 group-hover:bg-indigo-600 group-hover:text-white"
+              >
+                B
+              </span>
+
+              <span class="optionVal font-medium">define</span>
+            </button>
+
+            <!-- Option C -->
+            <button
+              class="option-btn group flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 p-4 text-left transition hover:border-indigo-500 hover:bg-indigo-50"
+            >
+              <span
+                class="alphabet flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-bold text-slate-600 group-hover:bg-indigo-600 group-hover:text-white"
+              >
+                C
+              </span>
+
+              <span class="optionVal font-medium">variable</span>
+            </button>
+
+            <!-- Option D -->
+            <button
+              class="option-btn group flex w-full items-center gap-4 rounded-2xl border-2 border-slate-200 p-4 text-left transition hover:border-indigo-500 hover:bg-indigo-50"
+            >
+              <span
+                class="alphabet flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 font-bold text-slate-600 group-hover:bg-indigo-600 group-hover:text-white"
+              >
+                D
+              </span>
+
+              <span class="optionVal font-medium">declare</span>
+            </button>
+          </div>
+
+          <!-- Feedback Message -->
+          <div
+            id="feedbackMessage"
+            class="mt-5 hidden rounded-xl p-4 text-sm font-medium"
+          ></div>
+
+          <!-- Bottom Controls -->
+          <div
+            class="mt-8 flex items-center justify-between gap-4 border-t border-slate-100 pt-6"
+          >
+            <!-- Score -->
+            <div>
+              <p class="text-xs text-slate-500">Current Score</p>
+
+              <p id="score" class="mt-1 text-xl font-bold text-slate-900">0</p>
+            </div>
+
+            <!-- Next Button -->
+            <button
+              id="nextBtn"
+              class="rounded-xl bg-indigo-600 px-6 py-3 font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled
+            >
+              Next Question →
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Quiz Result Screen -->
+    <section
+      id="resultScreen"
+      class="mx-auto max-w-2xl hidden px-5 py-10 absolute top-[17%] left-[38%]"
+    >
+      <div class="rounded-3xl bg-white p-10 text-center shadow-xl">
+        <div
+          class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-indigo-100 text-4xl"
+        >
+          🏆
+        </div>
+
+        <h2 class="mt-6 text-3xl font-bold text-slate-900">Quiz Completed!</h2>
+
+        <p class="mt-3 text-slate-500">
+          Great effort! Here is your final result.
+        </p>
+
+        <p id="finalScore" class="mt-6 text-5xl font-bold text-indigo-600">
+          0 / 10
+        </p>
+
+        <button
+          id="restartBtn"
+          class="mt-8 rounded-xl bg-indigo-600 px-7 py-3 font-semibold text-white transition hover:bg-indigo-700"
+        >
+          Restart Quiz
+        </button>
+      </div>
+    </section>
+
+    <script>
+      /* =========================================================
+       DOM ELEMENT REFERENCES
+       ========================================================= */
+
+      // Start screen button
+      const startBtn = document.querySelector("#startBtn");
+
+      // Question information
+      const currentQuestion = document.querySelector("#currentQuestion");
+      const category = document.querySelector("#category");
+      const difficulty = document.querySelector("#difficulty");
+      const questionText = document.querySelector("#questionText");
+
+      // Quiz controls
+      const optionsContainer = document.querySelector("#optionsContainer");
+      const optionButtons = document.querySelectorAll(".option-btn");
+      const optionValues = document.querySelectorAll(".optionVal");
+      const nextBtn = document.querySelector("#nextBtn");
+
+      // Score and progress
+      const score = document.querySelector("#score");
+      const progressBar = document.querySelector("#progressBar");
+
+      // Quiz/result screens
+      const mainHide = document.querySelector(".main");
+      const resultScreen = document.querySelector("#resultScreen");
+      const finalScore = document.querySelector("#finalScore");
+      const restartBtn = document.querySelector("#restartBtn");
+
+      /* =========================================================
+       QUIZ STATE
+       ========================================================= */
+
+      // Keeps track of which question is currently displayed
+      let currentQuestionIndex = 0;
+
+      // Stores the user's current score
+      let count = 0;
+
+      // Stores the correct answer for the current question
+      let answer;
+
+      /* =========================================================
+       QUESTION DATA
+       ========================================================= */
+
+      const questions = [
+        // -------------------------
+        // EASY QUESTIONS
+        // -------------------------
+
+        {
+          question:
+            "Which keyword is used to declare a variable that can be reassigned?",
+          category: "JavaScript",
+          difficulty: "Easy",
+          options: ["const", "let", "static", "fixed"],
+          answer: "let",
+        },
+
+        {
+          question: "What does typeof return for a string value?",
+          category: "JavaScript",
+          difficulty: "Easy",
+          options: ["string", "text", "String", "character"],
+          answer: "string",
+        },
+
+        {
+          question: "Which method adds an element to the end of an array?",
+          category: "JavaScript",
+          difficulty: "Easy",
+          options: ["push()", "pop()", "shift()", "unshift()"],
+          answer: "push()",
+        },
+
+        {
+          question:
+            "Which symbol is used for a single-line comment in JavaScript?",
+          category: "JavaScript",
+          difficulty: "Easy",
+          options: ["//", "/*", "#", "--"],
+          answer: "//",
+        },
+
+        // -------------------------
+        // MEDIUM QUESTIONS
+        // -------------------------
+
+        {
+          question: "What is the purpose of the map() method?",
+          category: "JavaScript",
+          difficulty: "Medium",
+          options: [
+            "To transform each array element",
+            "To remove the last element",
+            "To find one specific element",
+            "To sort an array",
+          ],
+          answer: "To transform each array element",
+        },
+
+        {
+          question: "What is the difference between == and === in JavaScript?",
+          category: "JavaScript",
+          difficulty: "Medium",
+          options: [
+            "== checks value with type coercion, === checks value and type",
+            "== checks type only, === checks value only",
+            "They always behave exactly the same",
+            "=== converts both values to strings",
+          ],
+          answer:
+            "== checks value with type coercion, === checks value and type",
+        },
+
+        {
+          question:
+            "What does a JavaScript closure allow a function to access?",
+          category: "JavaScript",
+          difficulty: "Medium",
+          options: [
+            "Only global variables",
+            "Variables from its outer lexical scope",
+            "Only variables declared inside itself",
+            "Variables from unrelated functions",
+          ],
+          answer: "Variables from its outer lexical scope",
+        },
+
+        // -------------------------
+        // HARD QUESTIONS
+        // -------------------------
+
+        {
+          question:
+            "How does the JavaScript event loop handle asynchronous callbacks?",
+          category: "JavaScript",
+          difficulty: "Hard",
+          options: [
+            "It executes every callback immediately",
+            "It creates a new JavaScript engine for each callback",
+            "It coordinates the call stack and task queues",
+            "It permanently pauses synchronous code",
+          ],
+          answer: "It coordinates the call stack and task queues",
+        },
+
+        {
+          question:
+            "What is the difference between microtasks and macrotasks in JavaScript?",
+          category: "JavaScript",
+          difficulty: "Hard",
+          options: [
+            "Macrotasks always execute before microtasks",
+            "They are two names for the same queue",
+            "Microtasks can only contain DOM events",
+            "Microtasks are generally processed before the next macrotask",
+          ],
+          answer:
+            "Microtasks are generally processed before the next macrotask",
+        },
+
+        {
+          question:
+            "How does lexical scoping affect variable access inside nested functions?",
+          category: "JavaScript",
+          difficulty: "Hard",
+          options: [
+            "Nested functions can access only global variables",
+            "Nested functions can access variables from their outer scopes",
+            "Outer functions can automatically access all nested variables",
+            "Lexical scope prevents nested functions from accessing outer variables",
+          ],
+          answer:
+            "Nested functions can access variables from their outer scopes",
+        },
+      ];
+
+      /* =========================================================
+       START QUIZ
+       ========================================================= */
+
+      startBtn.addEventListener("click", function () {
+        // Hide the start screen
+        document.querySelector("#startScreen").classList.add("hidden");
+
+        // Show the quiz content
+        mainHide.classList.remove("hidden");
+
+        // Show question counter and progress bar
+        document.querySelector(".ques").classList.remove("hidden");
+        document.querySelector(".progressBar").classList.remove("hidden");
+
+        // Load the first question
+        currentState();
+      });
+
+      /* =========================================================
+       RENDER CURRENT QUESTION
+       ========================================================= */
+
+      function currentState() {
+        // Get the current question object from the array
+        const currentQuestionValue = questions[currentQuestionIndex];
+
+        // Store the correct answer for answer checking
+        answer = currentQuestionValue.answer;
+
+        // Display question number
+        currentQuestion.textContent = currentQuestionIndex + 1;
+
+        // Calculate and display progress
+        progressBar.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+        // Display question metadata
+        category.textContent = currentQuestionValue.category;
+        difficulty.textContent = currentQuestionValue.difficulty;
+
+        // Display question text
+        questionText.textContent = currentQuestionValue.question;
+
+        // Display all four answer options
+        currentQuestionValue.options.forEach(function (value, index) {
+          optionValues[index].textContent = value;
+        });
+      }
+
+      /* =========================================================
+       RESET OPTION BUTTONS
+       ========================================================= */
+
+      function resetOptionButtons() {
+        optionButtons.forEach(function (btn) {
+          // Enable the option
+          btn.disabled = false;
+
+          // Remove previous answer colors
+          btn.classList.remove("bg-green-500", "bg-red-500");
+
+          // Restore default option styling
+          btn.classList.add(
+            "border-slate-200",
+            "transition",
+            "hover:border-indigo-500",
+            "hover:bg-indigo-50",
+          );
+
+          // Get the A/B/C/D badge
+          const span = btn.querySelector(".alphabet");
+
+          // Remove previous answer badge colors
+          span.classList.remove("bg-green-400", "bg-red-400", "text-white");
+
+          // Restore default badge styling
+          span.classList.add(
+            "bg-slate-100",
+            "group-hover:bg-indigo-600",
+            "group-hover:text-white",
+            "text-slate-600",
+          );
+        });
+      }
+
+      /* =========================================================
+       ENABLE NEXT BUTTON
+       ========================================================= */
+
+      function enableNextButton() {
+        // Remove disabled visual styles
+        nextBtn.classList.remove(
+          "disabled:cursor-not-allowed",
+          "disabled:opacity-50",
+        );
+
+        // Enable the button
+        nextBtn.removeAttribute("disabled");
+      }
+
+      /* =========================================================
+       DISABLE NEXT BUTTON
+       ========================================================= */
+
+      function disableNextButton() {
+        // Add disabled visual styles
+        nextBtn.classList.add(
+          "disabled:cursor-not-allowed",
+          "disabled:opacity-50",
+        );
+
+        // Disable the button
+        nextBtn.setAttribute("disabled", "true");
+      }
+
+      /* =========================================================
+       MARK SELECTED OPTION
+       ========================================================= */
+
+      function markSelectedOption(button, isCorrect) {
+        // Get the letter badge inside the selected button
+        const span = button.querySelector(".alphabet");
+
+        // Remove default styling
+        button.classList.remove(
+          "border-slate-200",
+          "transition",
+          "hover:border-indigo-500",
+          "hover:bg-indigo-50",
+        );
+
+        span.classList.remove(
+          "bg-slate-100",
+          "group-hover:bg-indigo-600",
+          "group-hover:text-white",
+          "text-slate-600",
+        );
+
+        // Apply correct or incorrect styling
+        if (isCorrect) {
+          button.classList.add("bg-green-500");
+          span.classList.add("bg-green-400", "text-white");
+        } else {
+          button.classList.add("bg-red-500");
+          span.classList.add("bg-red-400", "text-white");
+        }
+      }
+
+      /* =========================================================
+       HANDLE OPTION CLICK
+       ========================================================= */
+
+      function optionClickHandler() {
+        optionsContainer.addEventListener("click", function (event) {
+          // Find the option button that was clicked
+          const selectedBtn = event.target.closest(".option-btn");
+
+          // Ignore clicks that are not inside an option button
+          if (!selectedBtn) return;
+
+          // Get the selected answer text
+          const selectedOption =
+            selectedBtn.querySelector(".optionVal").textContent;
+
+          // Disable all other options
+          optionButtons.forEach(function (btn) {
+            if (btn !== selectedBtn) {
+              btn.disabled = true;
+
+              btn.classList.remove(
+                "border-slate-200",
+                "transition",
+                "hover:border-indigo-500",
+                "hover:bg-indigo-50",
+              );
+
+              const span = btn.querySelector(".alphabet");
+
+              span.classList.remove(
+                "bg-slate-100",
+                "group-hover:bg-indigo-600",
+                "group-hover:text-white",
+                "text-slate-600",
+              );
+            }
+          });
+
+          /* -----------------------------------------
+           CHECK ANSWER
+           ----------------------------------------- */
+
+          const isCorrect = selectedOption === answer;
+
+          // Style the selected option
+          markSelectedOption(selectedBtn, isCorrect);
+
+          /* -----------------------------------------
+           CORRECT ANSWER
+           ----------------------------------------- */
+
+          if (isCorrect) {
+            // Increase score
+            count++;
+
+            // Update score on screen
+            score.textContent = count;
+          } else {
+
+          /* -----------------------------------------
+           WRONG ANSWER
+           ----------------------------------------- */
+            // Find and highlight the correct answer
+            optionButtons.forEach(function (btn) {
+              const optionValue = btn.querySelector(".optionVal").textContent;
+
+              if (optionValue === answer) {
+                btn.disabled = true;
+
+                markSelectedOption(btn, true);
+              }
+            });
+          }
+
+          // Enable Next after an answer has been selected
+          enableNextButton();
+        });
+      }
+
+      /* =========================================================
+       NEXT QUESTION
+       ========================================================= */
+
+      function nextQuestion() {
+        nextBtn.addEventListener("click", function () {
+          /* -----------------------------------------
+           LAST QUESTION
+           ----------------------------------------- */
+
+          if (currentQuestionIndex === questions.length - 1) {
+            // Hide quiz content
+            mainHide.classList.add("hidden");
+
+            // Show result screen inside the same card
+            resultScreen.classList.remove("hidden");
+
+            // Display final score
+            finalScore.textContent = count + " / " + questions.length;
+
+            return;
+          }
+
+          /* -----------------------------------------
+           MOVE TO NEXT QUESTION
+           ----------------------------------------- */
+
+          currentQuestionIndex++;
+
+          // Load the next question
+          currentState();
+
+          // Restore all option buttons
+          resetOptionButtons();
+
+          // Prevent moving forward until an answer is selected
+          disableNextButton();
+        });
+      }
+
+      /* =========================================================
+       RESTART QUIZ
+       ========================================================= */
+
+      function restartQuiz() {
+        restartBtn.addEventListener("click", function () {
+          // Hide the result screen
+          resultScreen.classList.add("hidden");
+
+          // Show the quiz again
+          mainHide.classList.remove("hidden");
+
+          /* -----------------------------------------
+           RESET QUIZ STATE
+           ----------------------------------------- */
+
+          // Reset score
+          count = 0;
+
+          // Reset question index
+          currentQuestionIndex = 0;
+
+          // Reset score display
+          score.textContent = count;
+
+          // Reset final score display
+          finalScore.textContent = count + " / " + questions.length;
+
+          /* -----------------------------------------
+           RESET QUIZ UI
+           ----------------------------------------- */
+
+          // Load Question 1
+          currentState();
+
+          // Restore option buttons
+          resetOptionButtons();
+
+          // Disable Next until an answer is selected
+          disableNextButton();
+        });
+      }
+
+      /* =========================================================
+       INITIALIZE EVENT HANDLERS
+       ========================================================= */
+
+      optionClickHandler();
+      nextQuestion();
+      restartQuiz();
+    </script>
+  </body>
+</html>

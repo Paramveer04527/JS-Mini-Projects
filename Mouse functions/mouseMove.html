@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Functions</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        div{
+            height: 300px;
+            width: 500px;
+            border: 2px solid black;
+            justify-content: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+    </style>
+</head>
+<body>
+    <div></div>
+
+    <script>
+        let div = document.querySelector("div");
+        div.addEventListener("mousemove", function(details){
+            let rectangleLocation = div.getBoundingClientRect();
+            let insideDivVal = details.clientX - rectangleLocation.left;
+            if(insideDivVal < rectangleLocation.width/2){
+                // this is for how much left from width/2, we will map it to 0-255 for red color
+                let redColor = gsap.utils.mapRange(
+                    0, 
+                    rectangleLocation.width/2,
+                    255,
+                    0,
+                    insideDivVal);
+                gsap.to(
+                    div,
+                    {backgroundColor: `rgb(${redColor},0,0)`, 
+                    ease: Power4})
+            }
+            else{
+                // this is for how much right from width/2, we will map it to 0-255 for blue color
+                let blueColor = gsap.utils.mapRange(
+                    rectangleLocation.width/2, 
+                    rectangleLocation.width,
+                    0,
+                    255,
+                    insideDivVal);
+                gsap.to(
+                    div,
+                    {backgroundColor: `rgb(0,0,${blueColor})`, 
+                    ease: Power4})
+            }
+        })
+
+        div.addEventListener("mouseleave", function(){
+            gsap.to(div, {backgroundColor: "white", ease: Power4})
+        })
+    </script>
+</body>
+</html>

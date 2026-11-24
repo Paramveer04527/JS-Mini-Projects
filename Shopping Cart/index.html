@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>SLURGE | Shopping Cart</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: "#6D28D9",
+              dark: "#111827",
+              soft: "#F8F7FC",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+
+  <body class="bg-soft text-gray-900">
+    <!-- =========================================
+       NAVBAR
+       ========================================= -->
+
+    <header class="border-b border-gray-200 bg-white">
+      <nav
+        class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5"
+      >
+        <!-- Brand Logo -->
+        <a href="#" class="text-2xl font-black tracking-tight text-gray-900">
+          SLURGE<span class="text-brand">.</span>
+        </a>
+
+        <!-- Navigation Links -->
+        <div class="hidden gap-8 text-sm font-medium md:flex">
+          <a href="#" class="transition hover:text-brand">Home</a>
+          <a href="#" class="transition hover:text-brand">Shop</a>
+          <a href="#" class="transition hover:text-brand">Collections</a>
+          <a href="#" class="transition hover:text-brand">About</a>
+        </div>
+
+        <!-- Cart Icon and Count -->
+        <button
+          id="cartToggleBtn"
+          class="relative rounded-full bg-gray-100 px-4 py-3 transition hover:bg-purple-100"
+          aria-label="Open shopping cart"
+        >
+          🛒
+
+          <!-- JavaScript updates this count -->
+          <span
+            id="cartCount"
+            class="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-xs font-bold text-white"
+          >
+            0
+          </span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- =========================================
+       MAIN CONTENT
+       ========================================= -->
+
+    <main class="mx-auto max-w-7xl px-6 py-12">
+      <!-- Page Heading -->
+      <div class="mb-10">
+        <p
+          class="mb-2 text-sm font-semibold uppercase tracking-widest text-brand"
+        >
+          New Collection
+        </p>
+
+        <h1 class="text-4xl font-black tracking-tight md:text-5xl">
+          Discover your style.
+        </h1>
+
+        <p class="mt-3 max-w-xl text-gray-500">
+          Explore carefully selected products designed for your everyday
+          lifestyle.
+        </p>
+      </div>
+
+      <!-- =========================================
+         SHOPPING LAYOUT
+         ========================================= -->
+
+      <div class="grid gap-10 lg:grid-cols-[1fr_380px]">
+        <!-- =======================================
+           PRODUCT SECTION
+           ======================================= -->
+
+        <section>
+          <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-xl font-bold">Featured Products</h2>
+
+            <span class="text-sm text-gray-500"> 4 Products </span>
+          </div>
+
+          <!-- Product Cards Container -->
+          <!-- JavaScript can dynamically add cards here -->
+          <div id="productContainer" class="grid gap-6 sm:grid-cols-2">
+            <!-- PRODUCT CARD 1 -->
+
+            <article
+              class="product-card group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              data-product-id="1"
+              data-product-name="Essential Hoodie"
+              data-product-price="1499"
+            >
+              <!-- Product Image -->
+              <div
+                class="relative flex h-64 items-center justify-center bg-purple-100"
+              >
+                <span
+                  class="absolute left-4 top-4 rounded-full bg-white px-3 py-1 text-xs font-bold text-brand"
+                >
+                  Popular
+                </span>
+
+                <div
+                  class="text-8xl transition duration-300 group-hover:scale-110"
+                >
+                  👕
+                </div>
+              </div>
+
+              <!-- Product Details -->
+              <div class="p-5">
+                <p
+                  class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400"
+                >
+                  Apparel
+                </p>
+
+                <h3 class="product-name text-lg font-bold">Essential Hoodie</h3>
+
+                <p class="product-description mt-2 text-sm text-gray-500">
+                  Comfortable everyday hoodie.
+                </p>
+
+                <div class="mt-5 flex items-center justify-between">
+                  <p class="product-price text-lg font-black">₹1,499</p>
+
+                  <button
+                    class="add-to-cart rounded-full bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand"
+                    data-product-id="1"
+                  >
+                    Add +
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- PRODUCT CARD 2 -->
+
+            <article
+              class="product-card group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              data-product-id="2"
+              data-product-name="Urban Sneakers"
+              data-product-price="2499"
+            >
+              <div
+                class="relative flex h-64 items-center justify-center bg-blue-100"
+              >
+                <span
+                  class="absolute left-4 top-4 rounded-full bg-white px-3 py-1 text-xs font-bold text-blue-600"
+                >
+                  Trending
+                </span>
+
+                <div
+                  class="text-8xl transition duration-300 group-hover:scale-110"
+                >
+                  👟
+                </div>
+              </div>
+
+              <div class="p-5">
+                <p
+                  class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400"
+                >
+                  Footwear
+                </p>
+
+                <h3 class="product-name text-lg font-bold">Urban Sneakers</h3>
+
+                <p class="product-description mt-2 text-sm text-gray-500">
+                  Lightweight shoes for daily use.
+                </p>
+
+                <div class="mt-5 flex items-center justify-between">
+                  <p class="product-price text-lg font-black">₹2,499</p>
+
+                  <button
+                    class="add-to-cart rounded-full bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand"
+                    data-product-id="2"
+                  >
+                    Add +
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- PRODUCT CARD 3 -->
+
+            <article
+              class="product-card group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              data-product-id="3"
+              data-product-name="Classic Watch"
+              data-product-price="1999"
+            >
+              <div
+                class="relative flex h-64 items-center justify-center bg-amber-100"
+              >
+                <div
+                  class="text-8xl transition duration-300 group-hover:scale-110"
+                >
+                  ⌚
+                </div>
+              </div>
+
+              <div class="p-5">
+                <p
+                  class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400"
+                >
+                  Accessories
+                </p>
+
+                <h3 class="product-name text-lg font-bold">Classic Watch</h3>
+
+                <p class="product-description mt-2 text-sm text-gray-500">
+                  Minimal design with a premium look.
+                </p>
+
+                <div class="mt-5 flex items-center justify-between">
+                  <p class="product-price text-lg font-black">₹1,999</p>
+
+                  <button
+                    class="add-to-cart rounded-full bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand"
+                    data-product-id="3"
+                  >
+                    Add +
+                  </button>
+                </div>
+              </div>
+            </article>
+
+            <!-- PRODUCT CARD 4 -->
+
+            <article
+              class="product-card group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              data-product-id="4"
+              data-product-name="Everyday Backpack"
+              data-product-price="1799"
+            >
+              <div
+                class="relative flex h-64 items-center justify-center bg-emerald-100"
+              >
+                <div
+                  class="text-8xl transition duration-300 group-hover:scale-110"
+                >
+                  🎒
+                </div>
+              </div>
+
+              <div class="p-5">
+                <p
+                  class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400"
+                >
+                  Bags
+                </p>
+
+                <h3 class="product-name text-lg font-bold">
+                  Everyday Backpack
+                </h3>
+
+                <p class="product-description mt-2 text-sm text-gray-500">
+                  Spacious and practical backpack.
+                </p>
+
+                <div class="mt-5 flex items-center justify-between">
+                  <p class="product-price text-lg font-black">₹1,799</p>
+
+                  <button
+                    class="add-to-cart rounded-full bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand"
+                    data-product-id="4"
+                  >
+                    Add +
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- =======================================
+           CART SECTION
+           ======================================= -->
+
+        <aside
+          id="cartPanel"
+          class="h-fit rounded-3xl border border-gray-200 bg-white p-6 shadow-sm"
+        >
+          <!-- Cart Header -->
+          <div class="mb-6 flex items-center justify-between">
+            <h2 class="text-xl font-bold">Your Cart</h2>
+
+            <span
+              id="cartItemCount"
+              class="rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-brand"
+            >
+              0 Items
+            </span>
+          </div>
+
+          <!-- Empty Cart Message -->
+          <div
+            id="emptyCart"
+            class="flex min-h-48 flex-col items-center justify-center text-center"
+          >
+            <div class="mb-4 text-5xl">🛍️</div>
+
+            <h3 class="font-bold text-gray-800">Your cart is empty</h3>
+
+            <p class="mt-2 text-sm text-gray-500">
+              Add products to see them here.
+            </p>
+          </div>
+
+          <!-- Cart Items Container -->
+          <!-- JavaScript will insert cart items here -->
+          <div id="cartItems" class="hidden space-y-4"></div>
+
+          <!-- Cart Summary -->
+          <div
+            id="cartSummary"
+            class="mt-6 hidden border-t border-gray-200 pt-5"
+          >
+
+            <div class="mb-5 flex justify-between text-lg font-black">
+              <span>Total</span>
+              <span id="totalPrice">₹0</span>
+            </div>
+
+            <!-- Checkout Button -->
+            <button
+              id="checkoutBtn"
+              class="w-full rounded-full bg-brand px-5 py-3 font-bold text-white transition hover:bg-purple-800"
+            >
+              Proceed to Checkout
+            </button>
+
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <!-- =========================================
+    JAVASCRIPT FILE
+       ========================================= -->
+
+    <!-- Add your JavaScript file here later -->
+    <script>
+      /* =====================================================
+   1. SELECT DOM ELEMENTS
+===================================================== */
+
+      // Select all Add to Cart buttons
+      const addBtn = document.querySelectorAll(".add-to-cart");
+
+      // Cart container where cart products will be displayed
+      const cartItems = document.querySelector("#cartItems");
+
+      // Element that displays the total number of items
+      const cartItemCounter = document.querySelector("#cartItemCount");
+
+      // Element that displays the total price
+      const totalPrice = document.querySelector("#totalPrice");
+
+      // Message displayed when the cart is empty
+      const emptyCart = document.querySelector("#emptyCart");
+
+      // Container displaying the cart summary
+      const cartSummary = document.querySelector("#cartSummary");
+
+      // Main cart array
+      // Every product will be stored as an object inside this array
+      let cart = [];
+
+      /* =====================================================
+   2. ADD PRODUCT TO CART
+===================================================== */
+
+      function addToCart() {
+        // Add a click event to every Add to Cart button
+        addBtn.forEach(function (button) {
+          button.addEventListener("click", function (event) {
+            // Find the product card related to the clicked button
+            const card = event.target.closest(".product-card");
+
+            // Read product information from data attributes
+            const productID = card.dataset.productId;
+            const productName = card.dataset.productName;
+            const productPrice = card.dataset.productPrice;
+
+            // Every newly added product starts with quantity 1
+            const productQuantity = 1;
+
+            // Create an object representing the product
+            const productObj = {
+              id: productID,
+              name: productName,
+              price: productPrice,
+              quantity: productQuantity,
+            };
+
+            // Check whether this product already exists in the cart
+            const isDuplicate = cart.some(function (item) {
+              return item.id === productID;
+            });
+
+            if (isDuplicate) {
+              // Find the existing product and increase its quantity
+              cart.find(function (product) {
+                if (product.id === productID) {
+                  product.quantity += 1;
+                }
+              });
+            } else {
+              // If the product does not exist, add it to the cart
+              cart.push(productObj);
+            }
+
+            // Update the complete cart UI
+            refreshCart();
+          });
+        });
+      }
+
+      // Activate the Add to Cart functionality
+      addToCart();
+
+      /* =====================================================
+   3. UPDATE CART ITEM COUNT
+===================================================== */
+
+      function updateCartCount() {
+        // Start the total item count at zero
+        let count = 0;
+
+        // Loop through every product in the cart
+        cart.forEach(function (product) {
+          // Add each product's quantity to the count
+          count += product.quantity;
+        });
+
+        // Display the total quantity in the cart counter
+        cartItemCounter.textContent = count;
+      }
+
+      /* =====================================================
+   4. REFRESH COMPLETE CART UI
+===================================================== */
+
+      function refreshCart() {
+        // Show the empty-cart message if the cart has no products
+        if (cart.length === 0) {
+          emptyCart.classList.remove("hidden");
+        } else {
+          emptyCart.classList.add("hidden");
+        }
+
+        // Update the number of items
+        updateCartCount();
+
+        // Update the total price and cart summary
+        total();
+
+        // Rebuild the cart product elements
+        renderItems();
+      }
+
+      /* =====================================================
+   5. CALCULATE TOTAL PRICE
+===================================================== */
+
+      function total() {
+        // Store the overall cart price
+        let total = 0;
+
+        // Loop through every product
+        cart.forEach(function (productDets) {
+          // Read the product price and quantity
+          const price = productDets.price;
+          const quantity = productDets.quantity;
+
+          // Convert the price string into a number
+          // Then multiply it by the product quantity
+          const totalCost = Number(price) * quantity;
+
+          // Add this product's total to the overall total
+          total += totalCost;
+        });
+
+        // Display the overall price
+        totalPrice.textContent = "₹" + total;
+
+        // Hide the summary when the cart is empty
+        if (cart.length === 0) {
+          cartSummary.style.display = "none";
+        } else {
+          cartSummary.style.display = "initial";
+        }
+      }
+
+      /* =====================================================
+   6. RENDER CART ITEMS
+===================================================== */
+
+      function renderItems() {
+        // Clear the previous cart UI before rendering again
+        cartItems.innerHTML = "";
+
+        // Loop through every product stored in the cart
+        cart.forEach(function (item) {
+          // Create the main container for one cart product
+          const div = document.createElement("div");
+
+          // Create and display the product name
+          const p1 = document.createElement("p");
+          p1.textContent = item.name;
+          div.append(p1);
+
+          // Create and display the product price
+          const p2 = document.createElement("p");
+          p2.textContent = "₹" + item.price;
+          div.append(p2);
+
+          // Create and display the product quantity
+          const p3 = document.createElement("p");
+          p3.textContent = item.quantity;
+          div.append(p3);
+
+          // Create the decrease button
+          const btnDel = document.createElement("button");
+          btnDel.classList.add("decrease-btn");
+          btnDel.textContent = "-";
+          div.append(btnDel);
+
+          // Create the increase button
+          const btnAdd = document.createElement("button");
+          btnAdd.classList.add("increase-btn");
+          btnAdd.textContent = "+";
+          div.append(btnAdd);
+
+          // Create the remove button
+          const removeBtn = document.createElement("button");
+          removeBtn.classList.add("remove-btn");
+          removeBtn.textContent = "Remove";
+          div.append(removeBtn);
+
+          // Add the completed product container to the cart
+          cartItems.append(div);
+
+          // Display the cart items container
+          cartItems.classList.remove("hidden");
+
+          /* =================================================
+       7. INCREASE PRODUCT QUANTITY
+    ================================================= */
+
+          btnAdd.addEventListener("click", function () {
+            // Find the matching product in the cart array
+            const product = cart.find(function (product) {
+              return product.id === item.id;
+            });
+
+            // Check that the product exists
+            if (product) {
+              // Increase the quantity stored in the cart data
+              product.quantity += 1;
+
+              // Refresh the UI using the updated cart data
+              refreshCart();
+            }
+          });
+
+          /* =================================================
+       8. DECREASE PRODUCT QUANTITY
+    ================================================= */
+
+          btnDel.addEventListener("click", function () {
+            // Find the matching product in the cart array
+            const product = cart.find(function (product) {
+              return product.id === item.id;
+            });
+
+            // Check that the product exists
+            if (product) {
+              // If quantity is greater than 1, decrease it
+              if (product.quantity > 1) {
+                product.quantity -= 1;
+              } else {
+                // If quantity is 1, remove the product completely
+                cart = cart.filter(function (cartProduct) {
+                  return cartProduct.id !== item.id;
+                });
+              }
+
+              // Refresh the UI after changing the cart
+              refreshCart();
+            }
+          });
+
+          /* =================================================
+       9. REMOVE PRODUCT COMPLETELY
+    ================================================= */
+
+          removeBtn.addEventListener("click", function () {
+            // Keep every product except the selected product
+            cart = cart.filter(function (cartProduct) {
+              return cartProduct.id !== item.id;
+            });
+
+            // Refresh the UI after removing the product
+            refreshCart();
+          });
+        });
+      }
+
+      /* =====================================================
+   10. INITIAL CART DISPLAY
+===================================================== */
+
+      // Display the initial empty cart state
+      refreshCart();
+    </script>
+  </body>
+</html>

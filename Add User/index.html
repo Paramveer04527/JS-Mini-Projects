@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add User</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body>
+    <!-- add form -->
+    <div class="w-full max-w-lg mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+        <!-- Form Heading -->
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+            Create Profile
+        </h2>
+
+        <!-- Profile Form -->
+        <form id="profileForm" class="space-y-5">
+            <!-- Name -->
+            <div>
+                <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Full Name
+                </label>
+
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <!-- Role -->
+            <div>
+                <label for="role" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Role
+                </label>
+
+                <input type="text" id="role" name="role" placeholder="e.g. Frontend Developer" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <!-- Bio -->
+            <div>
+                <label for="bio" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Bio
+                </label>
+
+                <textarea id="bio" name="bio" rows="4" placeholder="Write a short bio..." required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+            </div>
+
+            <!-- Photo URL -->
+            <div>
+                <label for="photoUrl" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Photo URL
+                </label>
+
+                <input type="url" id="photoUrl" name="photoUrl" placeholder="https://example.com/photo.jpg" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit"
+                class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                Create Profile
+            </button>
+        </form>
+    </div>
+
+    <!-- cards -->
+
+    <div id="users" class="mt-5 w-full max-w-sm mx-auto bg-gray-900 text-white rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
+    </div>
+
+    <script>
+        let nameInput = document.querySelector("#name");
+        let roleInput = document.querySelector("#role");
+        let bioInput = document.querySelector("#bio");
+        let photoInput = document.querySelector("#photoUrl");
+
+        let profileForm = document.querySelector("#profileForm");
+
+        const userManager = {
+
+            // all users
+            users: [],
+
+            // initial function
+            init: function () {
+                // on submit, data comes here and binded values into new object
+                profileForm.addEventListener("submit", this.submitForm.bind(this))
+            },
+
+            // created submitForm function
+            submitForm: function (e) {
+                e.preventDefault();
+                // on submit, push these values inside users' array in form of object
+                this.addUser();
+            },
+
+            // add user
+            addUser: function () {
+                this.users.push({
+                    name: nameInput.value,
+                    role: roleInput.value,
+                    bio: bioInput.value,
+                    photo: photoInput.value
+                });
+                profileForm.reset();
+                this.renderUI();
+
+            },
+
+            // render users
+            renderUI: function () {
+                let usersContainer = document.querySelector("#users");
+                usersContainer.innerHTML = "";
+                this.users.forEach(function (user) {
+                    // Create main card div
+                    let card = document.createElement("div");
+
+                    card.className = "w-80 bg-gray-900 text-white rounded-2xl p-6 shadow-xl border border-gray-700";
+
+                    // Create profile image container
+                    let imgContainer = document.createElement("div");
+                    imgContainer.className = "flex justify-center mb-4";
+
+                    // Create profile image
+                    let img = document.createElement("img");
+                    img.src = user.photo;
+                    img.alt = "User Photo";
+                    img.className = "w-24 h-24 rounded-full object-cover border-4 border-purple-500";
+
+                    // Append image to image container
+                    imgContainer.append(img);
+
+                    // Create name
+                    let name = document.createElement("h2");
+                    name.textContent = user.name;
+                    name.className = "text-2xl font-bold text-center";
+
+                    // Create role
+                    let role = document.createElement("p");
+                    role.textContent = user.role;
+                    role.className = "text-purple-400 text-center font-semibold mt-1";
+
+                    // Create bio
+                    let bio = document.createElement("p");
+                    bio.textContent = user.bio;
+                    bio.className = "text-gray-400 text-sm text-center mt-4 leading-relaxed";
+
+                    // Append all elements to card
+                    card.append(imgContainer, name, role, bio);
+
+                    // Add card to webpage
+                    document.querySelector("#users").append(card);
+                })
+            },
+            removeUser: function () { }
+        };
+    userManager.init();
+    </script>
+</body>
+
+</html>
